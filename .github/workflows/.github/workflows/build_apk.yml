@@ -19,7 +19,7 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install Dependencies
+      - name: Install Flet and Firebase
         run: |
           pip install flet firebase-admin
 
@@ -27,12 +27,13 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          # Esto instala Flutter antes para que Flet no tenga que preguntar nada
+          flutter-version: '3.29.0' # Versión estable garantizada
 
-      - name: Build APK
+      - name: Build APK (Forzado)
         run: |
-          # El comando 'yes' le dice que sí a cualquier pregunta de la terminal
-          yes | flet build apk
+          # El parámetro --no-interaction evita que Flet haga preguntas
+          # El comando 'yes' es un respaldo por si acaso
+          yes | flet build apk --no-interaction
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
