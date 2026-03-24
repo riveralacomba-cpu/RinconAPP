@@ -23,10 +23,16 @@ jobs:
         run: |
           pip install flet firebase-admin
 
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          # Esto instala Flutter antes para que Flet no tenga que preguntar nada
+
       - name: Build APK
         run: |
-          # Este comando crea el APK y lo guarda en la carpeta build/apk
-          flet build apk
+          # El comando 'yes' le dice que sí a cualquier pregunta de la terminal
+          yes | flet build apk
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
