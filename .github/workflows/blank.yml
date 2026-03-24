@@ -19,18 +19,24 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install Dependencies
+      - name: Install Flet & Firebase
         run: |
           pip install flet firebase-admin
 
-      - name: Build APK
-        run: |
-          # Este comando crea el APK y lo guarda en la carpeta build/apk
-          flet build apk
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
         with:
-          name: el-rincon-app-final
-          path: build/apk/*.apk
-          if-no-files-found: error
+          channel: 'stable'
+          flutter-version: '3.29.0'
+
+      - name: Pre-accept Android Licenses
+        run: |
+          yes | sdkmanager --licenses || true
+
+      - name: Build APK (Manual Config)
+        run: |
+          # 1. Le decimos a Flet dónde está Flutter exactamente para que no pregunte
+          flet config flutter_path $FLUTTER_HOME
+          
+          # 2. Ejecutamos el build con una entrada forzada 'y' por si acaso
+          echo "y" | flet build apk --no-interaction
