@@ -19,7 +19,7 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install Flet and Firebase
+      - name: Install Flet & Firebase
         run: |
           pip install flet firebase-admin
 
@@ -27,17 +27,14 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          flutter-version: '3.29.0' # Versión estable garantizada
+          flutter-version: '3.29.0'
 
-      - name: Build APK (Forzado)
+      - name: Pre-accept Android Licenses
         run: |
-          # El parámetro --no-interaction evita que Flet haga preguntas
-          # El comando 'yes' es un respaldo por si acaso
-          yes | flet build apk --no-interaction
+          # Esto acepta las licencias de Android antes de que Flet las pida
+          yes | sdkmanager --licenses || true
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: el-rincon-app-final
-          path: build/apk/*.apk
-          if-no-files-found: error
+      - name: Build APK (Modo Silencioso)
+        run: |
+          # Usamos un truco de terminal para forzar la respuesta 'y' a todo
+          printf 'y\n' | flet build apk --no-interaction
